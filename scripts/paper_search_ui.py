@@ -178,7 +178,7 @@ def do_followup(followup_question, chat_model, papers):
 # ---------------------------------------------------------------------------
 
 def build_ui():
-    with gr.Blocks(title="Minerva 论文检索系统", theme=gr.themes.Soft()) as app:
+    with gr.Blocks(title="Minerva 论文检索系统") as app:
         gr.Markdown("# Minerva 论文检索系统\n"
                      "基于 NeurIPS / ICML / ICLR / ACL / EMNLP 2024-2025 论文库")
 

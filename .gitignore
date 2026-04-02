@@ -55,7 +55,9 @@ test_outputs/
 *results*/
 *.html
 
-# Paper search system (generated data)
-papers/
+# Paper search system
+# Keep metadata and summary, exclude large index and PDFs
+papers/index/
+papers/pdfs/
 papers_test/
 .chrome-headless-profile/
