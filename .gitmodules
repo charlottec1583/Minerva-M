@@ -1,0 +1,6 @@
+[submodule "wagent"]
+	path = wagent
+	url = https://github.com/HaoranWang-TJ/wagent.git
+[submodule "datasets/refusal_direction"]
+	path = datasets/refusal_direction
+	url = https://github.com/andyrdt/refusal_direction.git

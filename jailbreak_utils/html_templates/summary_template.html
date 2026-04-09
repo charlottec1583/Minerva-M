@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attack Workflow Summary</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2em; margin-bottom: 10px; }
+        .metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .metadata-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .metadata-label {
+            font-size: 0.75em;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .metadata-value {
+            font-weight: 600;
+            color: #212529;
+        }
+        .status-success { color: #28a745 !important; }
+        .status-failed { color: #dc3545 !important; }
+        .attempts {
+            padding: 30px;
+        }
+        .attempt {
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-left: 4px solid #667eea;
+        }
+        .attempt-header {
+            background: #e9ecef;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .attempt-success { border-left-color: #28a745 !important; }
+        .attempt-failed { border-left-color: #dc3545 !important; }
+        .section {
+            margin: 20px;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
+        }
+        .section-header {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .section-planner { background: #667eea; }
+        .section-generator { background: #51cf66; }
+        .section-target { background: #ff6b6b; }
+        .section-judge { background: #ffd43b; color: #212529 !important; }
+        .section-content {
+            padding: 15px;
+            font-size: 0.9em;
+        }
+        .label {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin: 2px;
+            font-family: monospace;
+        }
+        .label-success { background: #d4edda; color: #155724; }
+        .label-failed { background: #f8d7da; color: #721c24; }
+        .code-block {
+            background: #212529;
+            color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .col {
+            flex: 1;
+        }
+        .key {
+            font-weight: 600;
+            color: #495057;
+            min-width: 150px;
+            display: inline-block;
+        }
+        .value {
+            color: #212529;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .badge-valid { background: #d4edda; color: #155724; }
+        .badge-invalid { background: #f8d7da; color: #721c24; }
+        .badge-unknown { background: #fff3cd; color: #856404; }
+        .toggle {
+            cursor: pointer;
+            user-select: none;
+            background: #e9ecef;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin: 5px;
+        }
+        .toggle:hover { background: #dee2e6; }
+        .collapsible { display: none; }
+        .collapsible.show { display: block; }
+        /* GA Optimization History Styles */
+        .ga-generation {
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
+        }
+        .ga-generation-header {
+            background: #e9f6c8;
+            padding: 12px 15px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ga-generation-stats {
+            font-size: 0.85em;
+            color: #495057;
+            font-family: monospace;
+        }
+        .ga-population {
+            padding: 10px;
+        }
+        .ga-individual {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-left: 3px solid #adb5bd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .ga-individual-best {
+            background: #fff9e6;
+            border: 1px solid #ffc107;
+            border-left: 3px solid #ffc107;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .ga-individual-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .ga-individual-index {
+            color: #495057;
+            font-size: 0.9em;
+        }
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .subgraph-iteration {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 2px solid #51cf66;
+        }
+        .subgraph-iteration-header {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        .subgraph-prompt {
+            font-size: 0.85em;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Attack Workflow Summary</h1>
+            <p>Multi-turn Adversarial Evaluation Report</p>
+        </div>
+        <div class="metadata">
+            <div class="metadata-item">
+                <span class="metadata-label">Final Status</span>
+                <span class="metadata-value ${status_class}">${status_text}</span>
+            </div>
+            <div class="metadata-item">
+                <span class="metadata-label">Total Iterations</span>
+                <span class="metadata-value">${total_iterations}</span>
+            </div>
+            <div class="metadata-item">
+                <span class="metadata-label">Scenario ID</span>
+                <span class="metadata-value">${scenario_id}</span>
+            </div>
+            <div class="metadata-item">
+                <span class="metadata-label">Final Stage</span>
+                <span class="metadata-value">${final_stage}</span>
+            </div>
+            <div class="metadata-item">
+                <span class="metadata-label">Intention</span>
+                <span class="metadata-value">${intention}</span>
+            </div>
+${model_info_html}        </div>
+        <div class="attempts">
+${attempts_html}        </div>
+${ga_history_html}    </div>
+    <script>
+        function toggle(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>
